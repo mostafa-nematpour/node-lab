@@ -8,7 +8,9 @@ const server = http.createServer((req, res) => {
     try {
         router(req, res);
     } catch (error) {
-        res.end(Response.make('server error', 500));
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        // res.end(Response.make('server error', 500));
+        res.end(Response.make(error, 500));
         console.log(error);
     }
 

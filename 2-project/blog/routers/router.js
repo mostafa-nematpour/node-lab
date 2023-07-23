@@ -1,38 +1,43 @@
 
 const { Response } = require('../utilities/response.js');
 const { checkAuth, login } = require('../controllers/auth.js');
+const { blogs, addBlog, deleteBlog } = require('../controllers/blog.js');
+const { singleBlog } = require('../controllers/blog.js');
+const { checkRoute, extractFromPattern } = require('../utilities/routerCheck.js')
 
 function router(req, res) {
-    const { headers, url, method } = req;
-    // const method = req.
-    const { pathname, searchParams } = new URL(req.url, `http://${req.headers.host}`);
-
-    let checkRoute = function (r_method, r_url) {
-        return method === r_method && url === r_url;
-    }
-
     switch (true) {
-        case checkRoute('GET', '/blogs'):
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(Response.make("blogs", Response.HTTP_NOT_FOUND));
-            break;
-        case checkRoute('GET', '/blog/:id'):
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(Response.make("blog", Response.HTTP_NOT_FOUND));
+
+        case checkRoute(req, 'GET', '/blogs'):
+
+            blogs(req, res);
             break;
 
 
-        case checkRoute('PUT', '/blog'):
+        case checkRoute(req, 'GET', '/blog/:id', /^\/blog\/[a-zA-Z0-9_-]+$/):
+
+            const id = extractFromPattern(req.url, /^\/blog\/(.+)$/);
+            singleBlog(req, res, id)
+            break;
+
+        case checkRoute(req, 'DELETE', '/blog/:id', /^\/blog\/[a-zA-Z0-9_-]+$/):
+
+            const d_id = extractFromPattern(req.url, /^\/blog\/(.+)$/);
             checkAuth(req, res, () => {
-                // The checkAuth function will call this callback if the token is valid
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(Response.make(
-                    { message: 'Welcome! You are a logged-in user. This message is only visible to authenticated users.' },
-                    Response.HTTP_OK
-                ));
+                deleteBlog(req, res, d_id)
             });
+            break;
 
-        case checkRoute('POST', '/login'):
+
+        case checkRoute(req, 'POST', '/blog'):
+
+            checkAuth(req, res, () => {
+                addBlog(req, res);
+            });
+            break;
+
+
+        case checkRoute(req, 'POST', '/login'):
             login(req, res);
             break;
 
