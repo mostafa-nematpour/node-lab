@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
     } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         // res.end(Response.make('server error', 500));
-        res.end(Response.make(error, 500));
+        res.end(Response.make(error, Response.HTTP_INTERNAL_SERVER_ERROR));
         console.log(error);
     }
 
