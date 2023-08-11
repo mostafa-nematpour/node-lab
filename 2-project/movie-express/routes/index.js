@@ -1,18 +1,15 @@
 var express = require('express');
 var router = express.Router();
-let app = express();
-
-// let homeRouter = require('./home');
-// let usersRouter = require('./users');
-// let moviesRouter = require('./movies');
 
 
+let homeRouter = require('./home');
+let usersRouter = require('./users');
+let moviesRouter = require('./movies');
 
-// app.use('/', homeRouter);
-// app.use('/users', usersRouter);
-// app.use('/movies', moviesRouter);
 
-
+router.use('/', homeRouter);
+router.use('/users', usersRouter);
+router.use('/movies', moviesRouter);
 
 
 module.exports = router;
